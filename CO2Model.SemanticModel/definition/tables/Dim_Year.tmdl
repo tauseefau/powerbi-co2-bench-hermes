@@ -1,0 +1,66 @@
+table Dim_Year
+	lineageTag: 59810868-f508-da83-e136-10c90e6cbfe2
+
+	column Year
+		dataType: int64
+		isKey
+		formatString: 0
+		summarizeBy: none
+		lineageTag: 1d1ab17f-5373-fc7f-833b-d2920d28bd09
+		sourceColumn: Year
+
+
+	column Decade
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		lineageTag: ff99c0e4-05cb-f100-978d-454a93701bf4
+		sourceColumn: Decade
+
+
+	partition Dim_Year = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Year = Int64.Type, Decade = Int64.Type],
+				        {
+				            {1990, 1990},
+				            {1991, 1990},
+				            {1992, 1990},
+				            {1993, 1990},
+				            {1994, 1990},
+				            {1995, 1990},
+				            {1996, 1990},
+				            {1997, 1990},
+				            {1998, 1990},
+				            {1999, 1990},
+				            {2000, 2000},
+				            {2001, 2000},
+				            {2002, 2000},
+				            {2003, 2000},
+				            {2004, 2000},
+				            {2005, 2000},
+				            {2006, 2000},
+				            {2007, 2000},
+				            {2008, 2000},
+				            {2009, 2000},
+				            {2010, 2010},
+				            {2011, 2010},
+				            {2012, 2010},
+				            {2013, 2010},
+				            {2014, 2010},
+				            {2015, 2010},
+				            {2016, 2010},
+				            {2017, 2010},
+				            {2018, 2010},
+				            {2019, 2010},
+				            {2020, 2020},
+				            {2021, 2020},
+				            {2022, 2020},
+				            {2023, 2020},
+				            {2024, 2020}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

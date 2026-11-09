@@ -1,0 +1,7 @@
+relationship b0b73121-f27c-c7ae-7fdb-ec6a8c03103f
+	fromColumn: Fact_Emissions.CountryKey
+	toColumn: Dim_Country.CountryKey
+
+relationship 6e84d250-cddd-fdbe-f561-e4d6531c55a2
+	fromColumn: Fact_Emissions.Year
+	toColumn: Dim_Year.Year

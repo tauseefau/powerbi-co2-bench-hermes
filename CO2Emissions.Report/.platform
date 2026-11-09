@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.1.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "CO2Emissions"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "635402bc-35af-4969-a95c-0efc8b3b1c02"
+  }
+}

@@ -1,0 +1,122 @@
+table _Measures
+	lineageTag: 2f67fc44-2932-d410-bd38-985a14b4bf10
+
+	column Placeholder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		lineageTag: 06fb010c-5b1a-18bb-9981-f9f2cb4a6c8a
+		sourceColumn: Placeholder
+
+	/// Total CO2 emissions of the selected countries and years, in million tonnes (OWID).
+	measure 'Total CO2 (Mt)' =
+			SUM(Fact_Emissions[CO2_Mt])
+		formatString: #,0.0
+		lineageTag: 5c85c183-e264-5b5b-7010-7b862a4004b3
+
+	/// Sum of population of the selected rows.
+	measure Population =
+			SUM(Fact_Emissions[Population])
+		formatString: #,0
+		lineageTag: 224c6ad7-89f5-5534-ee8c-45a3ee8e555c
+
+	/// GDP per person in international-$, 2011 PPP (used by the GDP vs CO2 scatter page).
+	measure 'GDP per Capita ($)' =
+			DIVIDE([GDP], [Population])
+		formatString: #,0
+		lineageTag: 93172fc0-3f0c-3806-30e5-a43dbf3b5acf
+
+	/// Sum of GDP (international-$, 2011 PPP) of the selected rows.
+	measure GDP =
+			SUM(Fact_Emissions[GDP])
+		formatString: #,0
+		lineageTag: a072858f-d7e8-46bb-1b5b-0337c6f32fcd
+
+	/// Tonnes of CO2 per person: (CO2 Mt x 1e6) / population.
+	measure 'CO2 per Capita (t)' =
+			DIVIDE([Total CO2 (Mt)] * 1000000, [Population])
+		formatString: #,0.00
+		lineageTag: 2d63bb5c-fdcc-4ba2-bdb6-f8d47a79a457
+
+	/// Year-on-year change of Total CO2 against the previous year in the visible year context.
+	measure 'CO2 YoY %' =
+			VAR y = MAX ( Dim_Year[Year] )
+			VAR cur = CALCULATE ( [Total CO2 (Mt)], Dim_Year[Year] = y )
+			VAR prior =
+			    CALCULATE ( [Total CO2 (Mt)], REMOVEFILTERS ( Dim_Year ), Dim_Year[Year] = y - 1 )
+			RETURN
+			    DIVIDE ( cur - prior, prior )
+		formatString: 0.0%
+		lineageTag: a1e587b2-468c-5cfb-7cf7-1aad9add2346
+
+	/// Change against the 1990 Kyoto baseline for the countries currently in filter context.
+	measure 'CO2 vs 1990 %' =
+			VAR y = MAX ( Dim_Year[Year] )
+			VAR cur = CALCULATE ( [Total CO2 (Mt)], Dim_Year[Year] = y )
+			VAR base =
+			    CALCULATE ( [Total CO2 (Mt)], REMOVEFILTERS ( Dim_Year ), Dim_Year[Year] = 1990 )
+			RETURN
+			    DIVIDE ( cur - base, base )
+		formatString: 0.0%
+		lineageTag: 1fda604b-6991-3662-9b92-6e0d03573693
+
+	/// Country share of world CO2 for the years in filter context (country filter removed on purpose).
+	measure 'Share of Global CO2 %' =
+			VAR cur = [Total CO2 (Mt)]
+			VAR total_all =
+			    CALCULATE ( [Total CO2 (Mt)], REMOVEFILTERS ( Dim_Country ) )
+			RETURN
+			    DIVIDE ( cur, total_all )
+		formatString: 0.00%
+		lineageTag: fbea3ff4-9daa-1a48-bf7b-e0e1b3ae8d57
+
+	/// Coal-sourced CO2, million tonnes.
+	measure 'Coal CO2' =
+			SUM(Fact_Emissions[Coal_CO2])
+		formatString: #,0.0
+		lineageTag: fffba936-7264-fe6b-c51b-f41675a0828a
+
+	/// Oil-sourced CO2, million tonnes.
+	measure 'Oil CO2' =
+			SUM(Fact_Emissions[Oil_CO2])
+		formatString: #,0.0
+		lineageTag: 361035e0-90b7-a618-245e-4a6097016e74
+
+	/// Gas-sourced CO2, million tonnes.
+	measure 'Gas CO2' =
+			SUM(Fact_Emissions[Gas_CO2])
+		formatString: #,0.0
+		lineageTag: 086d97de-fd0d-7282-eeab-0200cd7a62bd
+
+	/// Cement-sourced CO2, million tonnes.
+	measure 'Cement CO2' =
+			SUM(Fact_Emissions[Cement_CO2])
+		formatString: #,0.0
+		lineageTag: dfc74ae2-44d2-6548-9a67-1f9d3398234b
+
+	/// Kilograms of CO2 per dollar of GDP: (CO2 Mt x 1e9) / GDP.
+	measure 'Carbon Intensity (kg per $ GDP)' =
+			DIVIDE([Total CO2 (Mt)] * 1000000000, [GDP])
+		formatString: #,0.000
+		lineageTag: 8f71ff25-9774-6896-e07a-073c280f302b
+
+	/// Dense rank of the country by Total CO2 within the countries visible in the report.
+	measure 'Rank by Total CO2' =
+			IF (
+			    ISBLANK ( [Total CO2 (Mt)] ),
+			    BLANK (),
+			    RANKX ( ALLSELECTED ( Dim_Country[Country] ), [Total CO2 (Mt)],, DESC, Dense )
+			)
+		formatString: #,0
+		lineageTag: e7ad4832-81f7-c1c4-c218-83acb57c4f95
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Placeholder = Int64.Type], {})
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,15 @@
+{
+  "countries": 218,
+  "fact_rows": 7630,
+  "year_min": 1990,
+  "year_max": 2024,
+  "co2_2022_mt_fact": 36553.536,
+  "co2_2022_mt_raw": 36553.536,
+  "diff_pct": 0.0,
+  "unmatched_iso": [],
+  "m_sizes_bytes": {
+    "Dim_Country": 15745,
+    "Fact_Emissions": 811645,
+    "Dim_Year": 1021
+  }
+}
